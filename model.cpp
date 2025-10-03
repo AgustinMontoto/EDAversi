@@ -97,10 +97,12 @@ void getValidMoves(GameModel &model, Moves &validMoves)
         for (int x = 0; x < BOARD_SIZE; x++)
         {
             Square move = {x, y};
+            Player player = getCurrentPlayer(model);
 
             // +++ TEST
             // Lists all empty squares...
-            if (getBoardPiece(model, move) == PIECE_EMPTY)
+            if (getBoardPiece(model, move) == PIECE_WHITE)
+
                 validMoves.push_back(move);
             // --- TEST
         }
