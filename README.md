@@ -25,4 +25,3 @@
 ## Bonus points
 
 [Aquí.]
-# EDAversi
