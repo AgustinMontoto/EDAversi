@@ -6,6 +6,7 @@
  */
 
 #include <cstring>
+#include <stdio.h>
 
 #include "raylib.h"
 
@@ -88,22 +89,231 @@ bool isSquareValid(Square square)
            (square.y < BOARD_SIZE);
 }
 
-void getValidMoves(GameModel &model, Moves &validMoves)
-{
-    // To-do: your code goes here...
-    
-
+/*void getValidMoves(GameModel &model, Moves &validMoves)
+{   
+    bool isPieceValid;
+    Player player = getCurrentPlayer(model);
     for (int y = 0; y < BOARD_SIZE; y++)
+    {
         for (int x = 0; x < BOARD_SIZE; x++)
         {
             Square move = {x, y};
-
-            // +++ TEST
-            // Lists all empty squares...
             if (getBoardPiece(model, move) == PIECE_EMPTY)
+            { 
+                for(auto i = x-1 ; i <= x + 1 && i < BOARD_SIZE && !isPieceValid ; i++)
+                {
+                    if(i < 0) continue;
+
+                    for(auto j = y - 1; j <= y + 1 && j < BOARD_SIZE && !isPieceValid; j++){
+
+                        if(j < 0 || (i == x && j == y)) continue;
+
+                        Square piecePos = {i, j};
+
+                        isPieceValid = false;
+
+                        if (getBoardPiece(model, piecePos) != (player+1) && getBoardPiece(model, piecePos) != PIECE_EMPTY){ //player+1 = PICE_COLOR,
+                            //case y fixed derech
+                            printf("entro 1\n");
+                            for(auto k = i + 1; k < BOARD_SIZE && !isPieceValid; k++){
+                                Square pos={k, y};
+                                Piece color=getBoardPiece(model, pos);
+                                if(color != PIECE_EMPTY){
+                                    if(color == player+1){
+                                        isPieceValid = true;
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                            printf("entro 2\n");
+                            //case y fixed izq
+                            for(auto k = x-1; k>=0 && !isPieceValid; k--){
+                                Square pos={k, y};
+                                Piece color=getBoardPiece(model, pos);
+                                if(color != PIECE_EMPTY){
+                                    if(color == player+1){
+                                        isPieceValid = true;
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                            //case x fixed derech
+                            for(auto k = y+1; k<BOARD_SIZE && !isPieceValid; k++){
+                                Square pos={x, k};
+                                Piece color=getBoardPiece(model, pos);
+                                if(color != PIECE_EMPTY){
+                                    if(color == player+1){
+                                        isPieceValid = true;
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                            //case x fixed izq
+                            for(auto k = y-1; k>=0 && !isPieceValid; k--){
+                                Square pos={x, k};
+                                Piece color=getBoardPiece(model, pos);
+                                if(color != PIECE_EMPTY){
+                                    if(color == player+1){
+                                        isPieceValid = true;
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                            //case x+1, y+1
+                            for(auto k = x+1, q= y+1; q < BOARD_SIZE && k < BOARD_SIZE && !isPieceValid; k++, q++){
+                                Square pos={k, q};
+                                Piece color=getBoardPiece(model, pos);
+                                if(color != PIECE_EMPTY){
+                                    if(color == player+1){
+                                        isPieceValid = true;
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                            //case x-1, y-1
+                            for(auto k = x-1, q= y-1; q >= 0 && k >= 0 && !isPieceValid; k--, q--){
+                                Square pos={k, q};
+                                Piece color=getBoardPiece(model, pos);
+                                if(color != PIECE_EMPTY){
+                                    if(color == player+1){
+                                        isPieceValid = true;
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                            //case x-1, y+1
+                            for(auto k = x - 1, q = y + 1; k>=0 && q < BOARD_SIZE && !isPieceValid; k--, q++){
+                                Square pos={k,q};
+                                Piece color=getBoardPiece(model, pos);
+                                if(color != PIECE_EMPTY){
+                                    if(color == player+1){
+                                        isPieceValid = true;
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                            //case x+1, y-1
+                            for(auto k = x + 1, q = y - 1; q >= 0 && k < BOARD_SIZE && !isPieceValid; q--, k++){
+                                Square pos={k,q};
+                                Piece color=getBoardPiece(model, pos);
+                                if(color != PIECE_EMPTY){
+                                    if(color == player+1){
+                                        isPieceValid = true;
+                                    }
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+                }
+                
+            }
+            if(isPieceValid)
+            {
                 validMoves.push_back(move);
-            // --- TEST
+            }    
         }
+    }
+}
+    */
+
+void getValidMoves(GameModel &model, Moves &validMoves)
+{   
+    Player player = getCurrentPlayer(model);
+    
+    // Las 8 direcciones posibles
+    int directions[8][2] = {
+        {1, 0},   // derecha
+        {-1, 0},  // izquierda
+        {0, 1},   // abajo
+        {0, -1},  // arriba
+        {1, 1},   // diagonal abajo-derecha
+        {-1, -1}, // diagonal arriba-izquierda
+        {-1, 1},  // diagonal abajo-izquierda
+        {1, -1}   // diagonal arriba-derecha
+    };
+    
+    for (int y = 0; y < BOARD_SIZE; y++)
+    {
+        for (int x = 0; x < BOARD_SIZE; x++)
+        {
+            Square move = {x, y};
+            
+            // Solo considerar casillas vacías
+            if (getBoardPiece(model, move) != PIECE_EMPTY) continue;
+            
+            bool isValidMove = false;
+            
+            // Revisar cada una de las 8 direcciones
+            for (int dir = 0; dir < 8 && !isValidMove; dir++)
+            {
+                int dx = directions[dir][0];
+                int dy = directions[dir][1];
+                
+                // Primera casilla en esta dirección
+                int nx = x + dx;
+                int ny = y + dy;
+                
+                // Verificar que está dentro del tablero
+                if (nx < 0 || nx >= BOARD_SIZE || ny < 0 || ny >= BOARD_SIZE)
+                    continue;
+                
+                Square firstPos = {nx, ny};
+                Piece firstPiece = getBoardPiece(model, firstPos);
+                
+                // Debe haber una pieza del oponente adyacente
+                if (firstPiece == PIECE_EMPTY || firstPiece == player + 1)
+                    continue;
+                
+                // Ahora buscar en esa dirección hasta encontrar una pieza propia
+                bool foundOpponent = true;
+                nx += dx;
+                ny += dy;
+                
+                while (nx >= 0 && nx < BOARD_SIZE && ny >= 0 && ny < BOARD_SIZE)
+                {
+                    Square pos = {nx, ny};
+                    Piece piece = getBoardPiece(model, pos);
+                    
+                    if (piece == PIECE_EMPTY) {
+                        // Espacio vacío, no es válido en esta dirección
+                        break;
+                    }
+                    else if (piece == player + 1) {
+                        // Encontramos nuestra pieza, ¡movimiento válido!
+                        isValidMove = true;
+                        break;
+                    }
+                    // Si es del oponente, continuar buscando
+                    
+                    nx += dx;
+                    ny += dy;
+                }
+            }
+            
+            if (isValidMove)
+            {
+                validMoves.push_back(move);
+            }
+        }
+    }
 }
 
 bool playMove(GameModel &model, Square move)
