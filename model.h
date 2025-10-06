@@ -53,8 +53,6 @@ struct GameModel
 
 typedef std::vector<Square> Moves;
 
-int distance ( GameModel &model,  Square piece, const int directions[2]);
-
 Square isValid (GameModel &model, Square piece, const int directions[2]);
 
 /**
@@ -139,5 +137,17 @@ void getValidMoves(GameModel &model, Moves &validMoves);
  * @return Move accepted.
  */
 bool playMove(GameModel &model, Square move);
+
+/**
+ * @brief Checks the amount of enemy pieces around an empty square.
+ *
+ * @param model The game model.
+ * @param start The square where we want to make a move.
+ * @param dx Direction x.
+ * @param dy Direction y.
+ * @return Amount of surrounding enemy pieces.
+ */
+int checkDirection(GameModel &model, Square start, int dx, int dy);
+
 
 #endif
