@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <stdio.h>
+#include <iostream>
 
 #include "raylib.h"
 
@@ -89,159 +90,66 @@ bool isSquareValid(Square square)
            (square.y < BOARD_SIZE);
 }
 
+// Esta función revisa una dirección y nos dice cuántas fichas enemigas hay.
+int checkDirection(GameModel &model, Square start, int dx, int dy) {
+    Piece playerPiece = (getCurrentPlayer(model) == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
+    Piece opponentPiece = (getCurrentPlayer(model) == PLAYER_WHITE) ? PIECE_BLACK : PIECE_WHITE;
+
+    int flipsInDirection = 0;
+    Square currentPos = {start.x + dx, start.y + dy};
+
+    // Avanzamos mientras estemos en el tablero y encontremos fichas del oponente.
+    while (isSquareValid(currentPos) && getBoardPiece(model, currentPos) == opponentPiece) {
+        flipsInDirection++;
+        currentPos.x += dx;
+        currentPos.y += dy;
+    }
+
+    // Un sándwich solo es válido si encontramos fichas para voltear (flipsInDirection > 0)
+    // Y si la línea termina en una de nuestras fichas.
+    if (flipsInDirection > 0 && isSquareValid(currentPos) && getBoardPiece(model, currentPos) == playerPiece) {
+        return flipsInDirection;
+    }
+
+    // Si no se cumplen AMBAS condiciones, no es una jugada válida en esta dirección.
+    return 0;
+}
+
 void getValidMoves(GameModel &model, Moves &validMoves)
 {   
     Player player = getCurrentPlayer(model);
     Piece playerColor = (player == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
 
-    
-    // Las 8 direcciones posibles
-    int directions[8][2] = {
-        {1, 0},   // derecha
-        {-1, 0},  // izquierda
-        {0, 1},   // abajo
-        {0, -1},  // arriba
-        {1, 1},   // diagonal abajo-derecha
-        {-1, -1}, // diagonal arriba-izquierda
-        {-1, 1},  // diagonal abajo-izquierda
-        {1, -1}   // diagonal arriba-derecha
-    };
+    for(int i=0; i<BOARD_SIZE; i++){
+        for(int j=0; j<BOARD_SIZE; j++){
+            Square currentSquare = {i, j};
 
-    
-    for(int i = 0; i < BOARD_SIZE; i++)
-    {
-        for(int j = 0; j < BOARD_SIZE; j++)
-        {
-            Square pos = {i, j};
-
-            if(!isSquareValid(pos))
-            {
-                break;
+            //Si la casilla no está vacía, seguimos.
+            if(getBoardPiece(model, currentSquare) != PIECE_EMPTY){
+                continue;
             }
 
-            Piece color = getBoardPiece(model, pos);
+            int totalEnemies = 0;
 
-            if(color == playerColor)
-            {
-                for(int k = 0; k < 8; k++)
-                {
-                    Square validPos = isValid(model, pos, directions[k]);
-                        if(isSquareValid(validPos))
-                        {
-                            validMoves.push_back(validPos);
-                        }
+            //Se revisan las 8 direcciones.
+            for(int dx = -1; dx <= 1; dx++){
+                for(int dy = -1; dy <= 1; dy++){
+                    //Nos saltamos la dirección (0,0) que es la que quiero analizar los "vecinos".
+                    if(dx == 0 && dy == 0){
+                        continue;
+                    }
 
+                    totalEnemies += checkDirection(model, currentSquare, dx, dy);   //revisamos si la dirección tiene fichas enemigas.
                 }
             }
-        }
-    }
-}
 
-Square isValid ( GameModel &model,  Square piece, const int directions[2])
-{
-    Player player = getCurrentPlayer(model);
-
-    Piece playerColor = (player == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
-
-    bool fistIteration = true;
-    bool isValid = true;
-
-    Square pos;
-
-
-
-    for(int i = 1; i < BOARD_SIZE && isValid; i++)
-    {
-        
-        pos = {piece.x + i*directions[0], piece.y + i*directions[1]};
-
-        if(!isSquareValid(pos)){
-            isValid = false;
-            break;
-        }
-
-        Piece posColor = getBoardPiece(model, pos);
-
-        if(posColor == PIECE_EMPTY)
-        {   
-            if(!fistIteration){
-                isValid = true;
-            }else{
-                isValid = false;
+            if(totalEnemies > 0){
+                validMoves.push_back(currentSquare);
             }
-            break;
-        }else if(posColor == playerColor)
-        {
-            isValid = false;
-            break;
-        }else
-        {
-            fistIteration = false;
-            continue;
 
         }
     }
-
-    if(!isValid){
-        return GAME_INVALID_SQUARE;
-    }else{
-        return pos;
-    }
-
-}
-
-int distance ( GameModel &model,  Square piece, const int directions[2])
-{
-    Player player = getCurrentPlayer(model);
-
-    Piece playerColor = (player == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
-
-    bool firstOponent = false;
-    bool lastMine = false;
-    bool isValid = true;
-
-    int distance = 0;
-
-
-
-    for(int i = 1; i < BOARD_SIZE && isValid; i++)
-    {
-        
-        Square pos = {piece.x + i*directions[0], piece.y + i*directions[1]};
-
-        if(!isSquareValid(pos)){
-            isValid = false;
-            break;
-        }
-
-        Piece posColor = getBoardPiece(model, pos);
-
-        if(posColor == playerColor)
-        {   
-            lastMine = true;
-            distance++; 
-            continue;
-        }else if(posColor == PIECE_EMPTY)
-        {
-            isValid = false;
-            break;
-        }else
-        {
-            firstOponent = true;
-            lastMine = false;
-            distance++;
-            continue;
-
-        }
-    }
-
-    if(firstOponent && lastMine)
-    {
-        return distance;
-    }else{
-        return -1;
-    }
-
+  
 }
 
 bool playMove(GameModel &model, Square move)
@@ -254,56 +162,26 @@ bool playMove(GameModel &model, Square move)
 
     setBoardPiece(model, move, piece);
 
-    // To-do: your code goes here...
-    for (int i = 0; i < BOARD_SIZE; i++)
-    {
-        for(int j = 0; j < BOARD_SIZE; j++)
-        {
-            Square pos = {i, j};
-            Piece color = getBoardPiece(model, pos);
+    for(int dx = -1; dx <= 1; dx++){
+        for(int dy = -1; dy <= 1; dy++){
+            //Nos saltamos la dirección (0,0) que es la que quiero analizar los "vecinos".
+            if(dx == 0 && dy == 0){
+                continue;
+            }
 
-            Piece playerColor = (model.currentPlayer == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
+            int enemies = checkDirection(model, move, dx, dy);  //Si encontramos "enemigos" en esa dirección, 
+                                                                //nos devuelve cuántas fichas hay que voltear.
+            if(enemies > 0){
+                Square currentPos = {move.x + dx, move.y + dy};
 
-            if(color == playerColor)
-            {
-                int directions[8][2] = {
-                    {1, 0},   // derecha
-                    {-1, 0},  // izquierda
-                    {0, 1},   // abajo
-                    {0, -1},  // arriba
-                    {1, 1},   // diagonal abajo-derecha
-                    {-1, -1}, // diagonal arriba-izquierda
-                    {-1, 1},  // diagonal abajo-izquierda
-                    {1, -1}   // diagonal arriba-derecha
-                };
-
-                bool flipped = false;
-
-                for(int k = 0; k < 8 && !flipped; k++)
-                {
-                    
-                    int dist = distance(model, pos, directions[k]);
-                    if(dist != -1)
-                    {
-                        for(int l = 1; l <= dist; l++)
-                        {
-                            Square flipPos = {pos.x + l*directions[k][0], pos.y + l*directions[k][1]};
-                            if(isSquareValid(flipPos))
-                            {
-                                setBoardPiece(model, flipPos, playerColor);
-                            }
-                            flipped = true;
-                        }
-                        
-                    }
+                for(int i = 0; i < enemies; i++){
+                    setBoardPiece(model, currentPos, piece);
+                    currentPos.x += dx;
+                    currentPos.y += dy;
                 }
-            }else{
-                continue; 
             }
         }
     }
-
-
     // Update timer
     double currentTime = GetTime();
     model.playerTime[model.currentPlayer] += currentTime - model.turnTimer;
@@ -333,5 +211,6 @@ bool playMove(GameModel &model, Square move)
         if (validMoves.size() == 0)
             model.gameOver = true;
     }
+
     return true;
 }
