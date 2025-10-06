@@ -238,6 +238,28 @@ void getValidMoves(GameModel &model, Moves &validMoves)
 {   
     Player player = getCurrentPlayer(model);
     
+    for(int i = 0; i < BOARD_SIZE; i++)
+    {
+        for(int j = 0; j < BOARD_SIZE; j++)
+        {
+            Square pos = {i, j};
+
+            Piece color = getBoardPiece(model, pos);
+            if(color == player + 1)
+            {
+                Square validPos = isValid(model, pos, color);
+                if(validPos.x != -1 && validPos.y != -1)
+                {
+                    validMoves.push_back(validPos);
+                }
+            }
+        }
+    }
+}
+
+Square isValid (GameModel &model, Square piece, Piece color)
+{
+    
     // Las 8 direcciones posibles
     int directions[8][2] = {
         {1, 0},   // derecha
@@ -249,71 +271,31 @@ void getValidMoves(GameModel &model, Moves &validMoves)
         {-1, 1},  // diagonal abajo-izquierda
         {1, -1}   // diagonal arriba-derecha
     };
-    
-    for (int y = 0; y < BOARD_SIZE; y++)
+    for (int k = 0; k < 8; k++)
     {
-        for (int x = 0; x < BOARD_SIZE; x++)
+        for(int i = 1; i <= BOARD_SIZE; i++)
         {
-            Square move = {x, y};
-            
-            // Solo considerar casillas vacías
-            if (getBoardPiece(model, move) != PIECE_EMPTY) continue;
-            
-            bool isValidMove = false;
-            
-            // Revisar cada una de las 8 direcciones
-            for (int dir = 0; dir < 8 && !isValidMove; dir++)
+            for(int j = 1; j <= BOARD_SIZE; j++)
             {
-                int dx = directions[dir][0];
-                int dy = directions[dir][1];
-                
-                // Primera casilla en esta dirección
-                int nx = x + dx;
-                int ny = y + dy;
-                
-                // Verificar que está dentro del tablero
-                if (nx < 0 || nx >= BOARD_SIZE || ny < 0 || ny >= BOARD_SIZE)
-                    continue;
-                
-                Square firstPos = {nx, ny};
-                Piece firstPiece = getBoardPiece(model, firstPos);
-                
-                // Debe haber una pieza del oponente adyacente
-                if (firstPiece == PIECE_EMPTY || firstPiece == player + 1)
-                    continue;
-                
-                // Ahora buscar en esa dirección hasta encontrar una pieza propia
-                bool foundOpponent = true;
-                nx += dx;
-                ny += dy;
-                
-                while (nx >= 0 && nx < BOARD_SIZE && ny >= 0 && ny < BOARD_SIZE)
+                Square pos = {piece.x + i*directions[k][0], piece.y + j*directions[k][1]};
+
+                Piece posColor = getBoardPiece(model, pos);
+
+                if(posColor == PIECE_EMPTY)
                 {
-                    Square pos = {nx, ny};
-                    Piece piece = getBoardPiece(model, pos);
-                    
-                    if (piece == PIECE_EMPTY) {
-                        // Espacio vacío, no es válido en esta dirección
-                        break;
-                    }
-                    else if (piece == player + 1) {
-                        // Encontramos nuestra pieza, ¡movimiento válido!
-                        isValidMove = true;
-                        break;
-                    }
-                    // Si es del oponente, continuar buscando
-                    
-                    nx += dx;
-                    ny += dy;
+                    break;
+                }else if(posColor == color)
+                {
+                    break;
+                }else
+                {
+                    return pos;
                 }
             }
-            
-            if (isValidMove)
-            {
-                validMoves.push_back(move);
-            }
         }
-    }
+    } 
+
+    return GAME_INVALID_SQUARE;
 }
 
 bool playMove(GameModel &model, Square move)
