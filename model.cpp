@@ -89,176 +89,11 @@ bool isSquareValid(Square square)
            (square.y < BOARD_SIZE);
 }
 
-/*void getValidMoves(GameModel &model, Moves &validMoves)
-{   
-    bool isPieceValid;
-    Player player = getCurrentPlayer(model);
-    for (int y = 0; y < BOARD_SIZE; y++)
-    {
-        for (int x = 0; x < BOARD_SIZE; x++)
-        {
-            Square move = {x, y};
-            if (getBoardPiece(model, move) == PIECE_EMPTY)
-            { 
-                for(auto i = x-1 ; i <= x + 1 && i < BOARD_SIZE && !isPieceValid ; i++)
-                {
-                    if(i < 0) continue;
-
-                    for(auto j = y - 1; j <= y + 1 && j < BOARD_SIZE && !isPieceValid; j++){
-
-                        if(j < 0 || (i == x && j == y)) continue;
-
-                        Square piecePos = {i, j};
-
-                        isPieceValid = false;
-
-                        if (getBoardPiece(model, piecePos) != (player+1) && getBoardPiece(model, piecePos) != PIECE_EMPTY){ //player+1 = PICE_COLOR,
-                            //case y fixed derech
-                            printf("entro 1\n");
-                            for(auto k = i + 1; k < BOARD_SIZE && !isPieceValid; k++){
-                                Square pos={k, y};
-                                Piece color=getBoardPiece(model, pos);
-                                if(color != PIECE_EMPTY){
-                                    if(color == player+1){
-                                        isPieceValid = true;
-                                    }
-                                }
-                                else{
-                                    break;
-                                }
-                            }
-                            printf("entro 2\n");
-                            //case y fixed izq
-                            for(auto k = x-1; k>=0 && !isPieceValid; k--){
-                                Square pos={k, y};
-                                Piece color=getBoardPiece(model, pos);
-                                if(color != PIECE_EMPTY){
-                                    if(color == player+1){
-                                        isPieceValid = true;
-                                    }
-                                }
-                                else{
-                                    break;
-                                }
-                            }
-                            //case x fixed derech
-                            for(auto k = y+1; k<BOARD_SIZE && !isPieceValid; k++){
-                                Square pos={x, k};
-                                Piece color=getBoardPiece(model, pos);
-                                if(color != PIECE_EMPTY){
-                                    if(color == player+1){
-                                        isPieceValid = true;
-                                    }
-                                }
-                                else{
-                                    break;
-                                }
-                            }
-                            //case x fixed izq
-                            for(auto k = y-1; k>=0 && !isPieceValid; k--){
-                                Square pos={x, k};
-                                Piece color=getBoardPiece(model, pos);
-                                if(color != PIECE_EMPTY){
-                                    if(color == player+1){
-                                        isPieceValid = true;
-                                    }
-                                }
-                                else{
-                                    break;
-                                }
-                            }
-                            //case x+1, y+1
-                            for(auto k = x+1, q= y+1; q < BOARD_SIZE && k < BOARD_SIZE && !isPieceValid; k++, q++){
-                                Square pos={k, q};
-                                Piece color=getBoardPiece(model, pos);
-                                if(color != PIECE_EMPTY){
-                                    if(color == player+1){
-                                        isPieceValid = true;
-                                    }
-                                }
-                                else{
-                                    break;
-                                }
-                            }
-                            //case x-1, y-1
-                            for(auto k = x-1, q= y-1; q >= 0 && k >= 0 && !isPieceValid; k--, q--){
-                                Square pos={k, q};
-                                Piece color=getBoardPiece(model, pos);
-                                if(color != PIECE_EMPTY){
-                                    if(color == player+1){
-                                        isPieceValid = true;
-                                    }
-                                }
-                                else{
-                                    break;
-                                }
-                            }
-                            //case x-1, y+1
-                            for(auto k = x - 1, q = y + 1; k>=0 && q < BOARD_SIZE && !isPieceValid; k--, q++){
-                                Square pos={k,q};
-                                Piece color=getBoardPiece(model, pos);
-                                if(color != PIECE_EMPTY){
-                                    if(color == player+1){
-                                        isPieceValid = true;
-                                    }
-                                }
-                                else{
-                                    break;
-                                }
-                            }
-                            //case x+1, y-1
-                            for(auto k = x + 1, q = y - 1; q >= 0 && k < BOARD_SIZE && !isPieceValid; q--, k++){
-                                Square pos={k,q};
-                                Piece color=getBoardPiece(model, pos);
-                                if(color != PIECE_EMPTY){
-                                    if(color == player+1){
-                                        isPieceValid = true;
-                                    }
-                                }
-                                else{
-                                    break;
-                                }
-                            }
-
-                        }
-                    }
-                }
-                
-            }
-            if(isPieceValid)
-            {
-                validMoves.push_back(move);
-            }    
-        }
-    }
-}
-    */
-
 void getValidMoves(GameModel &model, Moves &validMoves)
 {   
     Player player = getCurrentPlayer(model);
-    
-    for(int i = 0; i < BOARD_SIZE; i++)
-    {
-        for(int j = 0; j < BOARD_SIZE; j++)
-        {
-            Square pos = {i, j};
+    Piece playerColor = (player == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
 
-            Piece color = getBoardPiece(model, pos);
-            if(color == player + 1)
-            {
-                Square validPos = isValid(model, pos, color);
-                if(validPos.x != -1 && validPos.y != -1)
-                {
-                    validMoves.push_back(validPos);
-                }
-            }
-        }
-    }
-}
-
-Square isValid (GameModel &model, Square piece, Piece color)
-{
     
     // Las 8 direcciones posibles
     int directions[8][2] = {
@@ -271,31 +106,88 @@ Square isValid (GameModel &model, Square piece, Piece color)
         {-1, 1},  // diagonal abajo-izquierda
         {1, -1}   // diagonal arriba-derecha
     };
-    for (int k = 0; k < 8; k++)
+
+    
+    for(int i = 0; i < BOARD_SIZE; i++)
     {
-        for(int i = 1; i <= BOARD_SIZE; i++)
+        for(int j = 0; j < BOARD_SIZE; j++)
         {
-            for(int j = 1; j <= BOARD_SIZE; j++)
+            Square pos = {i, j};
+
+            if(!isSquareValid(pos))
             {
-                Square pos = {piece.x + i*directions[k][0], piece.y + j*directions[k][1]};
+                break;
+            }
 
-                Piece posColor = getBoardPiece(model, pos);
+            Piece color = getBoardPiece(model, pos);
 
-                if(posColor == PIECE_EMPTY)
+            if(color == playerColor)
+            {
+                for(int k = 0; k < 8; k++)
                 {
-                    break;
-                }else if(posColor == color)
-                {
-                    break;
-                }else
-                {
-                    return pos;
+                    Square validPos = isValid(model, pos, directions[k]);
+                        if(isSquareValid(validPos))
+                        {
+                            validMoves.push_back(validPos);
+                        }
+
                 }
             }
         }
-    } 
+    }
+}
 
-    return GAME_INVALID_SQUARE;
+Square isValid (GameModel &model, Square piece, const int directions[2])
+{
+    Player player = getCurrentPlayer(model);
+
+    Piece playerColor = (player == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
+
+    bool fistIteration = true;
+    bool isValid = true;
+
+    Square pos;
+
+
+
+    for(int i = 1; i < BOARD_SIZE && isValid; i++)
+    {
+        
+        pos = {piece.x + i*directions[0], piece.y + i*directions[1]};
+
+        if(!isSquareValid(pos)){
+            isValid = false;
+            break;
+        }
+
+        Piece posColor = getBoardPiece(model, pos);
+
+        if(posColor == PIECE_EMPTY)
+        {   
+            if(!fistIteration){
+                isValid = true;
+            }else{
+                isValid = false;
+            }
+            break;
+        }else if(posColor == playerColor)
+        {
+            isValid = false;
+            break;
+        }else
+        {
+            fistIteration = false;
+            continue;
+
+        }
+    }
+
+    if(!isValid){
+        return GAME_INVALID_SQUARE;
+    }else{
+        return pos;
+    }
+
 }
 
 bool playMove(GameModel &model, Square move)

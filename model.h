@@ -53,7 +53,7 @@ struct GameModel
 
 typedef std::vector<Square> Moves;
 
-Square isValid (GameModel &model, Square piece, Piece color);
+Square isValid (GameModel &model, Square piece, const int directions[2]);
 
 /**
  * @brief Initializes a game model.
