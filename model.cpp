@@ -137,7 +137,7 @@ void getValidMoves(GameModel &model, Moves &validMoves)
     }
 }
 
-Square isValid (GameModel &model, Square piece, const int directions[2])
+Square isValid ( GameModel &model,  Square piece, const int directions[2])
 {
     Player player = getCurrentPlayer(model);
 
@@ -190,6 +190,60 @@ Square isValid (GameModel &model, Square piece, const int directions[2])
 
 }
 
+int distance ( GameModel &model,  Square piece, const int directions[2])
+{
+    Player player = getCurrentPlayer(model);
+
+    Piece playerColor = (player == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
+
+    bool firstOponent = false;
+    bool lastMine = false;
+    bool isValid = true;
+
+    int distance = 0;
+
+
+
+    for(int i = 1; i < BOARD_SIZE && isValid; i++)
+    {
+        
+        Square pos = {piece.x + i*directions[0], piece.y + i*directions[1]};
+
+        if(!isSquareValid(pos)){
+            isValid = false;
+            break;
+        }
+
+        Piece posColor = getBoardPiece(model, pos);
+
+        if(posColor == playerColor)
+        {   
+            lastMine = true;
+            distance++; 
+            continue;
+        }else if(posColor == PIECE_EMPTY)
+        {
+            isValid = false;
+            break;
+        }else
+        {
+            firstOponent = true;
+            lastMine = false;
+            distance++;
+            continue;
+
+        }
+    }
+
+    if(firstOponent && lastMine)
+    {
+        return distance;
+    }else{
+        return -1;
+    }
+
+}
+
 bool playMove(GameModel &model, Square move)
 {
     // Set game piece
@@ -201,6 +255,54 @@ bool playMove(GameModel &model, Square move)
     setBoardPiece(model, move, piece);
 
     // To-do: your code goes here...
+    for (int i = 0; i < BOARD_SIZE; i++)
+    {
+        for(int j = 0; j < BOARD_SIZE; j++)
+        {
+            Square pos = {i, j};
+            Piece color = getBoardPiece(model, pos);
+
+            Piece playerColor = (model.currentPlayer == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
+
+            if(color == playerColor)
+            {
+                int directions[8][2] = {
+                    {1, 0},   // derecha
+                    {-1, 0},  // izquierda
+                    {0, 1},   // abajo
+                    {0, -1},  // arriba
+                    {1, 1},   // diagonal abajo-derecha
+                    {-1, -1}, // diagonal arriba-izquierda
+                    {-1, 1},  // diagonal abajo-izquierda
+                    {1, -1}   // diagonal arriba-derecha
+                };
+
+                bool flipped = false;
+
+                for(int k = 0; k < 8 && !flipped; k++)
+                {
+                    
+                    int dist = distance(model, pos, directions[k]);
+                    if(dist != -1)
+                    {
+                        for(int l = 1; l <= dist; l++)
+                        {
+                            Square flipPos = {pos.x + l*directions[k][0], pos.y + l*directions[k][1]};
+                            if(isSquareValid(flipPos))
+                            {
+                                setBoardPiece(model, flipPos, playerColor);
+                            }
+                            flipped = true;
+                        }
+                        
+                    }
+                }
+            }else{
+                continue; 
+            }
+        }
+    }
+
 
     // Update timer
     double currentTime = GetTime();
@@ -231,6 +333,5 @@ bool playMove(GameModel &model, Square move)
         if (validMoves.size() == 0)
             model.gameOver = true;
     }
-
     return true;
 }

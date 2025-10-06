@@ -53,6 +53,8 @@ struct GameModel
 
 typedef std::vector<Square> Moves;
 
+int distance ( GameModel &model,  Square piece, const int directions[2]);
+
 Square isValid (GameModel &model, Square piece, const int directions[2]);
 
 /**
