@@ -13,6 +13,7 @@
 
 #define BOARD_SIZE 8
 
+
 enum Player
 {
     PLAYER_BLACK,
@@ -37,21 +38,23 @@ struct Square
         -1, -1              \
     }
 
+typedef std::vector<Square> Moves;
 struct GameModel
 {
     bool gameOver;
+    bool first_human_try;
 
     Player currentPlayer;
 
     double playerTime[2];
-    double turnTimer;
+    double turnTimer;           //en segundos
 
     Piece board[BOARD_SIZE][BOARD_SIZE];
 
     Player humanPlayer;
+    Moves human_moves;
 };
 
-typedef std::vector<Square> Moves;
 
 Square isValid (GameModel &model, Square piece, const int directions[2]);
 

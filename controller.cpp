@@ -38,22 +38,23 @@ bool updateView(GameModel &model)
     }
     else if (model.currentPlayer == model.humanPlayer)
     {
+        if(model.first_human_try){      //clausula para que no llame a la funcion getValidMoves innecesariamente
+            getValidMoves(model, model.human_moves);
+            model.first_human_try = false;
+        }
         if (IsMouseButtonPressed(0))
         {
             // Human player
             Square square = getSquareOnMousePointer();
-
             if (isSquareValid(square))
-            {
-                Moves validMoves;
-                getValidMoves(model, validMoves);
-
+            {  
                 // Play move if valid
-                for (auto move : validMoves)
+                for (auto move : model.human_moves)
                 {
                     if ((square.x == move.x) &&
-                        (square.y == move.y))
+                        (square.y == move.y)){
                         playMove(model, square);
+                    }
                 }
             }
         }
@@ -71,7 +72,6 @@ bool updateView(GameModel &model)
         IsKeyPressed(KEY_ENTER))
         ToggleFullscreen();
 
-    drawView(model);
-
+    drawView(model, model.human_moves);
     return true;
 }

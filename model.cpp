@@ -26,6 +26,7 @@ void initModel(GameModel &model)
 void startModel(GameModel &model)
 {
     model.gameOver = false;
+    model.first_human_try = true;
 
     model.currentPlayer = PLAYER_BLACK;
 
@@ -185,7 +186,11 @@ bool playMove(GameModel &model, Square move)
     // Update timer
     double currentTime = GetTime();
     model.playerTime[model.currentPlayer] += currentTime - model.turnTimer;
+
     model.turnTimer = currentTime;
+
+    //Update flags
+    model.first_human_try = true;
 
     // Swap player
     model.currentPlayer =
@@ -205,12 +210,15 @@ bool playMove(GameModel &model, Square move)
                 ? PLAYER_BLACK
                 : PLAYER_WHITE;
 
-        Moves validMoves;
+        validMoves.clear();
         getValidMoves(model, validMoves);
 
         if (validMoves.size() == 0)
             model.gameOver = true;
     }
+
+    //reseteo valid moves
+    model.human_moves.clear();
 
     return true;
 }

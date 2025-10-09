@@ -10,6 +10,12 @@
 
 #include "model.h"
 
+struct treeNode{
+    Square square;
+    GameModel model;
+    std::vector<treeNode *> children;
+};
+
 /**
  * @brief Returns the best move for a certain position.
  *

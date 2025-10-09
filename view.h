@@ -21,11 +21,17 @@ void initView();
 void freeView();
 
 /**
+ * @brief Draws the posible moves in the players turn.
+ *
+ * @param model The game model.
+ */
+void drawPosibleMoves(GameModel &model, Moves validMoves);
+/**
  * @brief Draws the game view.
  *
  * @param model The game model.
  */
-void drawView(GameModel &model);
+void drawView(GameModel &model, Moves validMoves);
 
 /**
  * @brief Returns the square over the mouse pointer.
