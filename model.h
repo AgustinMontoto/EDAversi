@@ -78,7 +78,7 @@ void startModel(GameModel &model);
  * @param model The game model.
  * @return PLAYER_WHITE or PLAYER_BLACK.
  */
-Player getCurrentPlayer(GameModel &model);
+Player getCurrentPlayer(GameModel const&model);
 
 /**
  * @brief Returns the model's current score.
@@ -105,7 +105,7 @@ double getTimer(GameModel &model, Player player);
  * @param square The square.
  * @return The piece at the square.
  */
-Piece getBoardPiece(GameModel &model, Square square);
+Piece getBoardPiece(GameModel const&model, Square square);
 
 /**
  * @brief Sets a model's piece.
@@ -130,7 +130,7 @@ bool isSquareValid(Square square);
  * @param model The game model.
  * @param validMoves A list that receives the valid moves.
  */
-void getValidMoves(GameModel &model, Moves &validMoves);
+void getValidMoves(GameModel const&model, Moves &validMoves);
 
 /**
  * @brief Plays a move.
@@ -150,7 +150,7 @@ bool playMove(GameModel &model, Square move);
  * @param dy Direction y.
  * @return Amount of surrounding enemy pieces.
  */
-int checkDirection(GameModel &model, Square start, int dx, int dy);
+int checkDirection(GameModel const&model, Square start, int dx, int dy);
 
 
 #endif

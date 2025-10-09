@@ -13,6 +13,7 @@
 struct treeNode{
     Square square;
     GameModel model;
+    int value;      //minimax value of the node
     std::vector<treeNode *> children;
 };
 
