@@ -6,6 +6,7 @@
  */
 
 #include <cstdlib>
+#include <cstdio>
 
 #include <queue>
 #include "ai.h"
@@ -31,8 +32,8 @@ int value_state(GameModel & model){
     }
 }
 
-void init_tree(GameModel const& model, Tree_level_t& Tree_level){
-    if (/*depth >= maxDepth ||*/ model.gameOver) {
+void init_tree(GameModel const& model, Tree_level_t& Tree_level,int depth, int maxDepth){
+    if (depth >= maxDepth || model.gameOver) {
         return;
     }
     Moves valid_moves;
@@ -49,7 +50,7 @@ void init_tree(GameModel const& model, Tree_level_t& Tree_level){
 
         Tree_level.push_back(node);
 
-        init_tree(child_model, node->children);
+        init_tree(child_model, node->children, depth+1, maxDepth);
     }
 
 }
@@ -80,9 +81,10 @@ void Recorrido_BFS(Tree_level_t& Tree_level){     //uso el algoritmo BFS para la
 }
 
 // Algoritmo Minimax recursivo
-int minimax(treeNode* node, Player ia_player) {
+int minimax(treeNode* node, Player ia_player, int depth, int maxDepth, int &g_nodesExplored) {
     // Caso base: nodo hoja
-    if (node->children.empty()) {
+    g_nodesExplored ++;
+    if (depth>=maxDepth || node->children.empty()) {
         return value_state(node->model);
     }
     
@@ -91,7 +93,7 @@ int minimax(treeNode* node, Player ia_player) {
         int maxValue = -1000;       //valor random muy chico para el caso del primer hijo       
         
         for (auto child : node->children) {     //se fija en todos sus nodos hijos a ver cual tiene el mayor valor y lo guarda
-            int value = minimax(child, ia_player);
+            int value = minimax(child, ia_player, depth + 1, maxDepth, g_nodesExplored);
             maxValue = std::max(maxValue, value);
         }
         
@@ -102,7 +104,7 @@ int minimax(treeNode* node, Player ia_player) {
         int minValue = 1000;
         
         for (auto child : node->children) {
-            int value = minimax(child, ia_player);
+            int value = minimax(child, ia_player, depth + 1, maxDepth, g_nodesExplored);
             minValue = std::min(minValue, value);
         }
         
@@ -111,12 +113,17 @@ int minimax(treeNode* node, Player ia_player) {
     }
 }
 
-// Obtiene el mejor movimiento usando Minimax-Parte 2
+// Obtiene el mejor movimiento usando Minimax
 Square getBestMove(GameModel &model) {
 
-    std::vector<treeNode*> gameTree;
-    init_tree(model, gameTree);
+    //Poda stats
+    int maxDepth = 4;       
+    int g_maxNodes = 10000;  //todavia no podo por nodos 
+    int g_nodesExplored=0;   
     
+    std::vector<treeNode*> gameTree;
+    init_tree(model, gameTree, 0, maxDepth);
+
     if (gameTree.empty()) {
         return GAME_INVALID_SQUARE;
     }
@@ -126,7 +133,7 @@ Square getBestMove(GameModel &model) {
     Square bestMove;
     
     for (auto node : gameTree) {
-        int value = minimax(node, ia_player);
+        int value = minimax(node, ia_player, 0, maxDepth, g_nodesExplored);
         
         // Quedarse con el movimiento de mayor valor
         if (value > bestValue) {
@@ -134,7 +141,7 @@ Square getBestMove(GameModel &model) {
             bestMove = node->square;
         }
     }
-
+    printf("Nodos explorados: %d, Mejor valor: %d\n", g_nodesExplored, bestValue);
     free_tree(gameTree);
     return bestMove;
 
