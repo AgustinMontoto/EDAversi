@@ -58,6 +58,8 @@
 #define INFO_PLAYWHITE_BUTTON_X INFO_CENTERED_X
 #define INFO_PLAYWHITE_BUTTON_Y (WINDOW_HEIGHT * 7 / 8)
 
+#define LIGHTGREEN CLITERAL(Color){ 144, 238, 144, 255 }
+
 void initView()
 {
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME);
@@ -68,6 +70,7 @@ void initView()
 void freeView()
 {
     CloseWindow();
+    
 }
 
 /**
@@ -167,9 +170,10 @@ static bool isMousePointerOverButton(Vector2 position)
             (mousePosition.y < (position.y + INFO_BUTTON_HEIGHT / 2)));
 }
 
-void drawView(GameModel &model)
+void drawView(GameModel &model, Moves validMoves)
 {
     BeginDrawing();
+    
 
     ClearBackground(BEIGE);
 
@@ -181,6 +185,7 @@ void drawView(GameModel &model)
         BLACK);
 
     for (int y = 0; y < BOARD_SIZE; y++)
+    {
         for (int x = 0; x < BOARD_SIZE; x++)
         {
             Square square = {x, y};
@@ -196,8 +201,8 @@ void drawView(GameModel &model)
                  SQUARE_CONTENT_SIZE},
                 0.2F,
                 6,
-                DARKGREEN);
-
+               DARKGREEN);
+                
             Piece piece = getBoardPiece(model, square);
 
             if (piece != PIECE_EMPTY)
@@ -206,7 +211,23 @@ void drawView(GameModel &model)
                            PIECE_RADIUS,
                            (piece == PIECE_WHITE) ? WHITE : BLACK);
         }
-
+    }
+    if(model.currentPlayer==model.humanPlayer){
+        for(auto move:validMoves){
+            Vector2 position = {
+                BOARD_X + (float)move.x * SQUARE_SIZE,
+                BOARD_Y + (float)move.y * SQUARE_SIZE};
+            DrawRectangleRounded(
+                {position.x + SQUARE_CONTENT_OFFSET,
+                position.y + SQUARE_CONTENT_OFFSET,
+                SQUARE_CONTENT_SIZE,
+                SQUARE_CONTENT_SIZE},
+                0.2F,
+                6,
+                LIGHTGREEN);
+        }
+            
+    }
     drawScore("Black score: ",
               {INFO_CENTERED_X,
                INFO_WHITE_SCORE_Y},
@@ -242,7 +263,7 @@ void drawView(GameModel &model)
                    "Play white",
                    WHITE);
     }
-
+    
     EndDrawing();
 }
 

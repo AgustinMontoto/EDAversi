@@ -13,6 +13,7 @@
 
 #define BOARD_SIZE 8
 
+
 enum Player
 {
     PLAYER_BLACK,
@@ -37,21 +38,23 @@ struct Square
         -1, -1              \
     }
 
+typedef std::vector<Square> Moves;
 struct GameModel
 {
     bool gameOver;
+    bool first_human_try;
 
     Player currentPlayer;
 
     double playerTime[2];
-    double turnTimer;
+    double turnTimer;           //en segundos
 
     Piece board[BOARD_SIZE][BOARD_SIZE];
 
     Player humanPlayer;
+    Moves human_moves;
 };
 
-typedef std::vector<Square> Moves;
 
 Square isValid (GameModel &model, Square piece, const int directions[2]);
 
@@ -75,7 +78,7 @@ void startModel(GameModel &model);
  * @param model The game model.
  * @return PLAYER_WHITE or PLAYER_BLACK.
  */
-Player getCurrentPlayer(GameModel &model);
+Player getCurrentPlayer(GameModel const&model);
 
 /**
  * @brief Returns the model's current score.
@@ -102,7 +105,7 @@ double getTimer(GameModel &model, Player player);
  * @param square The square.
  * @return The piece at the square.
  */
-Piece getBoardPiece(GameModel &model, Square square);
+Piece getBoardPiece(GameModel const&model, Square square);
 
 /**
  * @brief Sets a model's piece.
@@ -127,7 +130,7 @@ bool isSquareValid(Square square);
  * @param model The game model.
  * @param validMoves A list that receives the valid moves.
  */
-void getValidMoves(GameModel &model, Moves &validMoves);
+void getValidMoves(GameModel const&model, Moves &validMoves);
 
 /**
  * @brief Plays a move.
@@ -147,7 +150,7 @@ bool playMove(GameModel &model, Square move);
  * @param dy Direction y.
  * @return Amount of surrounding enemy pieces.
  */
-int checkDirection(GameModel &model, Square start, int dx, int dy);
+int checkDirection(GameModel const&model, Square start, int dx, int dy);
 
 
 #endif

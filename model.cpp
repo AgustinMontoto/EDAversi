@@ -26,6 +26,7 @@ void initModel(GameModel &model)
 void startModel(GameModel &model)
 {
     model.gameOver = false;
+    model.first_human_try = true;
 
     model.currentPlayer = PLAYER_BLACK;
 
@@ -40,7 +41,7 @@ void startModel(GameModel &model)
     model.board[BOARD_SIZE / 2][BOARD_SIZE / 2 - 1] = PIECE_BLACK;
 }
 
-Player getCurrentPlayer(GameModel &model)
+Player getCurrentPlayer(GameModel const&model)
 {
     return model.currentPlayer;
 }
@@ -72,7 +73,7 @@ double getTimer(GameModel &model, Player player)
     return model.playerTime[player] + turnTime;
 }
 
-Piece getBoardPiece(GameModel &model, Square square)
+Piece getBoardPiece(GameModel const&model, Square square)
 {
     return model.board[square.y][square.x];
 }
@@ -91,7 +92,7 @@ bool isSquareValid(Square square)
 }
 
 // Esta función revisa una dirección y nos dice cuántas fichas enemigas hay.
-int checkDirection(GameModel &model, Square start, int dx, int dy) {
+int checkDirection(GameModel const&model, Square start, int dx, int dy) {
     Piece playerPiece = (getCurrentPlayer(model) == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
     Piece opponentPiece = (getCurrentPlayer(model) == PLAYER_WHITE) ? PIECE_BLACK : PIECE_WHITE;
 
@@ -115,7 +116,7 @@ int checkDirection(GameModel &model, Square start, int dx, int dy) {
     return 0;
 }
 
-void getValidMoves(GameModel &model, Moves &validMoves)
+void getValidMoves(GameModel const&model, Moves &validMoves)
 {   
     Player player = getCurrentPlayer(model);
     Piece playerColor = (player == PLAYER_WHITE) ? PIECE_WHITE : PIECE_BLACK;
@@ -185,7 +186,11 @@ bool playMove(GameModel &model, Square move)
     // Update timer
     double currentTime = GetTime();
     model.playerTime[model.currentPlayer] += currentTime - model.turnTimer;
+
     model.turnTimer = currentTime;
+
+    //Update flags
+    model.first_human_try = true;
 
     // Swap player
     model.currentPlayer =
@@ -205,12 +210,15 @@ bool playMove(GameModel &model, Square move)
                 ? PLAYER_BLACK
                 : PLAYER_WHITE;
 
-        Moves validMoves;
+        validMoves.clear();
         getValidMoves(model, validMoves);
 
         if (validMoves.size() == 0)
             model.gameOver = true;
     }
+
+    //reseteo valid moves
+    model.human_moves.clear();
 
     return true;
 }
