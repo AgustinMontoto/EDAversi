@@ -39,21 +39,28 @@ struct Square
     }
 
 typedef std::vector<Square> Moves;
+
+struct tree_logic{
+    Player currentPlayer;
+    bool gameOver;
+    Piece board[BOARD_SIZE][BOARD_SIZE];
+};
+
+
 struct GameModel
 {
-    bool gameOver;
+    
     bool first_human_try;
 
-    Player currentPlayer;
+    tree_logic tree;
 
     double playerTime[2];
     double turnTimer;           //en segundos
 
-    Piece board[BOARD_SIZE][BOARD_SIZE];
-
     Player humanPlayer;
     Moves human_moves;
 };
+
 
 
 Square isValid (GameModel &model, Square piece, const int directions[2]);
@@ -81,6 +88,14 @@ void startModel(GameModel &model);
 Player getCurrentPlayer(GameModel const&model);
 
 /**
+ * @brief Returns the current player from tree_logic.
+ *
+ * @param tree The tree logic state.
+ * @return PLAYER_WHITE or PLAYER_BLACK.
+ */
+Player getCurrentPlayer(tree_logic const&tree);
+
+/**
  * @brief Returns the model's current score.
  *
  * @param model The game model.
@@ -88,6 +103,15 @@ Player getCurrentPlayer(GameModel const&model);
  * @return The score.
  */
 int getScore(GameModel &model, Player player);
+
+/**
+ * @brief Returns the score from tree_logic.
+ *
+ * @param tree The tree logic state.
+ * @param player The player (PLAYER_WHITE or PLAYER_BLACK).
+ * @return The score.
+ */
+int getScore(tree_logic const&tree, Player player);
 
 /**
  * @brief Returns the game timer for a player.
@@ -108,6 +132,15 @@ double getTimer(GameModel &model, Player player);
 Piece getBoardPiece(GameModel const&model, Square square);
 
 /**
+ * @brief Return a piece from tree_logic.
+ *
+ * @param tree The tree logic state.
+ * @param square The square.
+ * @return The piece at the square.
+ */
+Piece getBoardPiece(tree_logic const&tree, Square square);
+
+/**
  * @brief Sets a model's piece.
  *
  * @param model The game model.
@@ -115,6 +148,15 @@ Piece getBoardPiece(GameModel const&model, Square square);
  * @param piece The piece to be set
  */
 void setBoardPiece(GameModel &model, Square square, Piece piece);
+
+/**
+ * @brief Sets a piece in tree_logic.
+ *
+ * @param tree The tree logic state.
+ * @param square The square.
+ * @param piece The piece to be set
+ */
+void setBoardPiece(tree_logic &tree, Square square, Piece piece);
 
 /**
  * @brief Checks whether a square is within the board.
@@ -133,6 +175,14 @@ bool isSquareValid(Square square);
 void getValidMoves(GameModel const&model, Moves &validMoves);
 
 /**
+ * @brief Returns a list of valid moves from tree_logic.
+ *
+ * @param tree The tree logic state.
+ * @param validMoves A list that receives the valid moves.
+ */
+void getValidMoves(tree_logic const&tree, Moves &validMoves);
+
+/**
  * @brief Plays a move.
  *
  * @param model The game model.
@@ -140,6 +190,15 @@ void getValidMoves(GameModel const&model, Moves &validMoves);
  * @return Move accepted.
  */
 bool playMove(GameModel &model, Square move);
+
+/**
+ * @brief Plays a move on tree_logic.
+ *
+ * @param tree The tree logic state.
+ * @param square The move.
+ * @return Move accepted.
+ */
+bool playMove(tree_logic &tree, Square move);
 
 /**
  * @brief Checks the amount of enemy pieces around an empty square.
@@ -151,6 +210,25 @@ bool playMove(GameModel &model, Square move);
  * @return Amount of surrounding enemy pieces.
  */
 int checkDirection(GameModel const&model, Square start, int dx, int dy);
+
+/**
+ * @brief Checks the amount of enemy pieces from tree_logic.
+ *
+ * @param tree The tree logic state.
+ * @param start The square where we want to make a move.
+ * @param dx Direction x.
+ * @param dy Direction y.
+ * @return Amount of surrounding enemy pieces.
+ */
+int checkDirection(tree_logic const&tree, Square start, int dx, int dy);
+
+/**
+ * @brief Creates a tree_logic from GameModel.
+ *
+ * @param model The game model.
+ * @return A tree_logic with the essential state.
+ */
+tree_logic gameStateFromModel(GameModel const& model);
 
 
 #endif

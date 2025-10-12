@@ -10,16 +10,17 @@
 
 #include "model.h"
 
-struct treeNode{
+struct treeNode {
     Square square;
-    GameModel model;
-    int value;      //minimax value of the node
-    std::vector<treeNode *> children;
+    tree_logic state;  // Para copiar el estado esencial, no GameModel completo
+    std::vector<treeNode*> children;
+    int value;
 };
 
 /**
- * @brief Returns the best move for a certain position.
+ * @brief Gets the best move for the AI player.
  *
+ * @param model The game model.
  * @return The best move.
  */
 Square getBestMove(GameModel &model);

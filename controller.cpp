@@ -18,7 +18,7 @@ bool updateView(GameModel &model)
     if (WindowShouldClose())
         return false;
 
-    if (model.gameOver)
+    if (model.tree.gameOver)
     {
         if (IsMouseButtonPressed(0))
         {
@@ -36,7 +36,7 @@ bool updateView(GameModel &model)
             }
         }
     }
-    else if (model.currentPlayer == model.humanPlayer)
+    else if (model.tree.currentPlayer == model.humanPlayer)
     {
         if(model.first_human_try){      //clausula para que no llame a la funcion getValidMoves innecesariamente
             getValidMoves(model, model.human_moves);

@@ -212,7 +212,7 @@ void drawView(GameModel &model, Moves validMoves)
                            (piece == PIECE_WHITE) ? WHITE : BLACK);
         }
     }
-    if(model.currentPlayer==model.humanPlayer){
+    if(model.tree.currentPlayer==model.humanPlayer){
         for(auto move:validMoves){
             Vector2 position = {
                 BOARD_X + (float)move.x * SQUARE_SIZE,
@@ -251,7 +251,7 @@ void drawView(GameModel &model, Moves validMoves)
               getTimer(model,
                            PLAYER_WHITE));
 
-    if (model.gameOver)
+    if (model.tree.gameOver)
     {
         drawButton({INFO_PLAYBLACK_BUTTON_X,
                     INFO_PLAYBLACK_BUTTON_Y},
