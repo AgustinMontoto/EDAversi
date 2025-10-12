@@ -2,7 +2,7 @@
 
 ## Integrantes del grupo y contribución al trabajo de cada integrante
 
-* [Nombre]: [contribución]
+* MICAELA DINSEN: desarrollo del motor de reglas y la mecánica central del juego Reversi, asegurando que el motor del juego se comporte de acuerdo al reglamento oficial.
 
 [completar]
 
@@ -29,3 +29,4 @@ Conclusión: construir el árbol completo no es viable. Es necesario acotar la b
 ## Bonus points
 
 [Aquí.]
+
