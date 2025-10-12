@@ -82,16 +82,24 @@ void Recorrido_BFS(Tree_level_t& Tree_level){     //uso el algoritmo BFS para la
 }
 
 // Algoritmo Minimax recursivo
+<<<<<<< HEAD
 int minimax(treeNode* node, Player ia_player, int depth, int maxDepth, int &g_nodesExplored, bool fuerza_bruta) {
     // Caso base: nodo hoja
     g_nodesExplored ++;
     if ((depth>=maxDepth && !fuerza_bruta) || node->children.empty()) {
+=======
+int minimax(treeNode* node, Player ia_player, int depth, int maxDepth, int &g_nodesExplored) {
+    static int maxValue = -1000;       //valor random muy chico para el caso del primer hijo   
+    static int minValue = 1000;
+    // Caso base: nodo hoja
+    g_nodesExplored ++;
+    if (maxValue >= minValue || node->children.empty()) {
+>>>>>>> 5b5d51f28a997a728e4fe0a2712d15ed5b40d40a
         return value_state(node->model);
     }
     
     //evaluo caso inductivo
-    if (node->model.currentPlayer == ia_player) {     // Turno de la IA: maximizar
-        int maxValue = -1000;       //valor random muy chico para el caso del primer hijo       
+    if (node->model.currentPlayer == ia_player) {     // Turno de la IA: maximizar    
         
         for (auto child : node->children) {     //se fija en todos sus nodos hijos a ver cual tiene el mayor valor y lo guarda
             int value = minimax(child, ia_player, depth + 1, maxDepth, g_nodesExplored, fuerza_bruta);
@@ -102,7 +110,6 @@ int minimax(treeNode* node, Player ia_player, int depth, int maxDepth, int &g_no
         return maxValue;
         
     } else {                // Turno del humano: minimizar
-        int minValue = 1000;
         
         for (auto child : node->children) {
             int value = minimax(child, ia_player, depth + 1, maxDepth, g_nodesExplored, fuerza_bruta);
