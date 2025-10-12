@@ -130,7 +130,7 @@ Square getBestMove(GameModel &model) {
 
     //Poda stats
     int maxDepth = 5;       
-    int g_maxNodes = 50000;  
+    int g_maxNodes = 280000;  
     int g_nodesExplored = 0;
     bool fuerza_bruta = false;
     
