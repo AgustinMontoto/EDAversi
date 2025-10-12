@@ -82,19 +82,12 @@ void Recorrido_BFS(Tree_level_t& Tree_level){     //uso el algoritmo BFS para la
 }
 
 // Algoritmo Minimax recursivo
-<<<<<<< HEAD
 int minimax(treeNode* node, Player ia_player, int depth, int maxDepth, int &g_nodesExplored, bool fuerza_bruta) {
-    // Caso base: nodo hoja
-    g_nodesExplored ++;
-    if ((depth>=maxDepth && !fuerza_bruta) || node->children.empty()) {
-=======
-int minimax(treeNode* node, Player ia_player, int depth, int maxDepth, int &g_nodesExplored) {
     static int maxValue = -1000;       //valor random muy chico para el caso del primer hijo   
     static int minValue = 1000;
     // Caso base: nodo hoja
     g_nodesExplored ++;
-    if (maxValue >= minValue || node->children.empty()) {
->>>>>>> 5b5d51f28a997a728e4fe0a2712d15ed5b40d40a
+    if ((depth>=maxDepth && !fuerza_bruta) || node->children.empty()) {
         return value_state(node->model);
     }
     
