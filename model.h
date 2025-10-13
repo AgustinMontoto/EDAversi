@@ -40,7 +40,8 @@ struct Square
 
 typedef std::vector<Square> Moves;
 
-struct tree_logic{
+struct tree_logic
+{
     Player currentPlayer;
     bool gameOver;
     Piece board[BOARD_SIZE][BOARD_SIZE];
@@ -48,8 +49,7 @@ struct tree_logic{
 
 
 struct GameModel
-{
-    
+{   
     bool first_human_try;
     tree_logic tree;
     double playerTime[2];

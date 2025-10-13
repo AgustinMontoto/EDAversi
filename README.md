@@ -13,7 +13,7 @@
 *
 
 ## Parte 2: Implementación del motor de IA
-
+Para implementar el motor de ia hicimos un arbol de juego.
 
 ## Parte 3: Poda del árbol
 En la parte 2 implementamos minimax sin limitar la profundidad de búsqueda. Como consecuencia, la función init_tree intenta construir un árbol de estados completo y minimax recorre todos sus nodos.
