@@ -22,14 +22,6 @@
 * Si se encuentran fichas enemigas en el medio y al final no hay ni una ficha nuentra ni se sale del tablero, guardamos el movimiento como valido
 
 ## Parte 2: Implementación del motor de IA
-Para la parte de la implementacion del motor de IA, dividimos el "trabajo" en 3 partes. Opening, Mid-Game & Ending. 
-
-Para la parte del Opening, Buscamos bases de datos de los mejores opening y jugadas que se suelen repetir, ya que al principio los movimientos suelen ser muy parecidos. Con esto, logramos hacer que no recorrer tantos nodos ya que al principio es donde mas hijos hay.
-
-Para la parte de Mid-Game 
-
-Parte la parte Ending, una vez quedan 8 casillas libres restantes (o menos), utilizamos fuerza bruta para predecir todos los posibles finales ya que altura del arbol se reducio de gran manera con respecto a las otras etapas. Por lo tanto, siempre evaluamos todos los posibles resultados con respecto a los movimientos propios y del rival, y en base a eso ses juega el proximo "mejor" movimiento
-
 
 
 ## Parte 3: Poda del árbol
