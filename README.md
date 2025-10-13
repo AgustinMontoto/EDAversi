@@ -6,9 +6,9 @@
 
 * AGUSTIN MONTOTO: Desarrollo del motor de reglas y mecanica central del juego Reversi, asegurando que el motor del juego se comporte de acuerdo al reglamento oficial. Implementacion del modelo de ia alpha-beta pruning. Implementacion de los openings y mejores jugadas del inicio. 
 
-* LEILA CASAIS:
+* LEILA CASAIS: Generacion del arbol de juego, evaluacion de los nodos de la parte 2 del TP y poda por profundidad y cantidad de nodos.
 
-* MARIA SOL VIGILANTE:
+* MARIA SOL VIGILANTE: Busqueda de las funciones de evaluacion optimas para mejorar la inteligencia de juego de la ia y mejora de la poda.
 
 ## Parte 1: Generación de movimientos válidos y algoritmo de jugada
 
