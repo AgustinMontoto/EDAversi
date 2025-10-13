@@ -4,15 +4,32 @@
 
 * MICAELA DINSEN: desarrollo del motor de reglas y la mecánica central del juego Reversi, asegurando que el motor del juego se comporte de acuerdo al reglamento oficial.
 
-[completar]
+* AGUSTIN MONTOTO:
+
+* LEILA CASAIS:
+
+* MARIA SOL VIGILANTE
 
 ## Parte 1: Generación de movimientos válidos y algoritmo de jugada
 
 [Enumera aquí las pruebas que hiciste para validar que tu generador de movimientos válidos y algoritmo de jugada funcionan correctamente.]
 * Cambiamos el color de las posibles movidas del jugador humano para poder corroborar que son validas
-*
+
+* Para la validacion de movimientos validos, empezamos a recorrer el tablero y salteamos las casillas que esten ocupadas. 
+
+* Cuando una casilla esta libre, recorre en las 8 direcciones (Horizontal, Vertical y Diagonal)
+
+* Si se encuentran fichas enemigas en el medio y al final no hay ni una ficha nuentra ni se sale del tablero, guardamos el movimiento como valido
 
 ## Parte 2: Implementación del motor de IA
+Para la parte de la implementacion del motor de IA, dividimos el "trabajo" en 3 partes. Opening, Mid-Game & Ending. 
+
+Para la parte del Opening, Buscamos bases de datos de los mejores opening y jugadas que se suelen repetir, ya que al principio los movimientos suelen ser muy parecidos. Con esto, logramos hacer que no recorrer tantos nodos ya que al principio es donde mas hijos hay.
+
+Para la parte de Mid-Game 
+
+Parte la parte Ending, una vez quedan 8 casillas libres restantes (o menos), utilizamos fuerza bruta para predecir todos los posibles finales ya que altura del arbol se reducio de gran manera con respecto a las otras etapas. Por lo tanto, siempre evaluamos todos los posibles resultados con respecto a los movimientos propios y del rival, y en base a eso ses juega el proximo "mejor" movimiento
+
 
 
 ## Parte 3: Poda del árbol
@@ -24,7 +41,7 @@ Conclusión: construir el árbol completo no es viable. Es necesario acotar la b
 
 ## Documentación adicional
 
-[Aquí.]
+Base de datos para la apertura: https://samsoft.org.uk/reversi/openings.htm
 
 ## Bonus points
 
