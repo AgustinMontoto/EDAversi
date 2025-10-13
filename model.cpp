@@ -39,6 +39,7 @@ void startModel(GameModel &model)
     model.tree.board[BOARD_SIZE / 2 - 1][BOARD_SIZE / 2] = PIECE_BLACK;
     model.tree.board[BOARD_SIZE / 2][BOARD_SIZE / 2] = PIECE_WHITE;
     model.tree.board[BOARD_SIZE / 2][BOARD_SIZE / 2 - 1] = PIECE_BLACK;
+    model.moveHistory.clear();
 }
 
 Player getCurrentPlayer(GameModel const&model)
@@ -252,6 +253,7 @@ bool playMove(GameModel &model, Square move)
             : PIECE_BLACK;
 
     setBoardPiece(model, move, piece);
+    model.moveHistory.push_back(move);
 
     for(int dx = -1; dx <= 1; dx++){
         for(int dy = -1; dy <= 1; dy++){

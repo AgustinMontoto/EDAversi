@@ -8,11 +8,81 @@
 #include <cstdlib>
 #include <cstdio>
 #include <queue>
-
+#include <unordered_map>
+#include <string>
+#include <cctype>
 #include "ai.h"
 #include "controller.h"
 
 typedef std::vector<treeNode*> Tree_level_t;
+
+// Convierte Square {x,y} a notación Othello "C4" (A1 es (0,0), H8 es (7,7))
+static std::string toAlg(Square s) {
+    char col = char('A' + s.x);
+    char row = char('1' + s.y);
+    return std::string{col, row};
+}
+
+// Parseo simple "C4" -> Square {2,3}. Retorna GAME_INVALID_SQUARE si hay error.
+static Square fromAlg(const std::string& alg) {
+    if (alg.size() != 2) return GAME_INVALID_SQUARE;
+    char c = std::toupper(alg[0]);
+    char r = alg[1];
+    if (c < 'A' || c > 'H' || r < '1' || r > '8') return GAME_INVALID_SQUARE;
+    return Square{ int(c - 'A'), int(r - '1') };
+}
+
+// Devuelve la cadena de historial en mayúsculas "C4C3D3..."
+static std::string historyStringUpper(const GameModel& model) {
+    std::string s;
+    s.reserve(model.moveHistory.size()*2);
+    for (const auto& mv : model.moveHistory) {
+        std::string a = toAlg(mv);
+        s.push_back(std::toupper(a[0]));
+        s.push_back(a[1]); // los dígitos ya están ok
+    }
+    return s;
+}
+
+// Tabla de aperturas: prefijo -> mejor siguiente jugada (ambas en mayúsculas).
+// Tomadas de Samsoft: Diagonal (C4 C3 → D3), Perpendicular (C4 E3 → F5 / F6),
+// Paralela (C4 C5 → D6: el sitio anota explícitamente que el libro de WZebra
+// da +6 para negras tras D6), y algunas continuaciones frecuentes.
+static const std::vector<std::pair<std::string,std::string>> OPENING_BOOK = {
+    // Respuestas tempranas canónicas
+    {"C4C3", "D3"},     // Diagonal → D3
+    {"C4E3", "F5"},     // Perpendicular → F5 (también existe F6)
+    {"C4C5", "D6"},     // Paralela → D6 (recomendado por Samsoft/WZebra)
+
+    // Un par de continuaciones típicas
+    {"C4E3F4C5", "D6"}, // Mimura/Shaman rama base: ...F4 c5 → D6
+    {"C4C3D3C5", "D6"}, // Landau/Buffalo rama base: ...D3 c5 → D6
+};
+
+// Busca coincidencia exacta de prefijo y valida que la jugada sea legal.
+// Si encuentra match, escribe en outMove y devuelve true.
+static bool openingBookBestMove(const GameModel& model, Square& outMove) {
+    std::string hist = historyStringUpper(model);
+    for (const auto& kv : OPENING_BOOK) {
+        const std::string& prefix = kv.first;
+        if (hist == prefix) {
+            Square candidate = fromAlg(kv.second);
+            if (!isSquareValid(candidate)) return false;
+            // Solo jugamos si también es legal ahora mismo
+            Moves legal;
+            getValidMoves(model, legal);
+            for (auto m : legal) {
+                if (m.x == candidate.x && m.y == candidate.y) {
+                    outMove = candidate;
+                    return true;
+                }
+            }
+            // Si el libro sugiere algo ilegal (por desviación previa), no lo usamos
+            return false;
+        }
+    }
+    return false;
+}
 
 int value_state(tree_logic const& state, Player ia_player, Player humanPlayer){
     
@@ -143,6 +213,12 @@ int minimax(treeNode* node, Player ia_player, Player humanPlayer, int depth, int
 // Obtiene el mejor movimiento usando Minimax
 Square getBestMove(GameModel &model) {
 
+    // 1) Intentar jugar de libro de aperturas (si hay match y la movida es legal)
+    Square bookMove;
+    if (openingBookBestMove(model, bookMove)) {
+        return bookMove;
+    }
+    
     Player ia_player = (model.humanPlayer == PLAYER_WHITE) ? PLAYER_BLACK : PLAYER_WHITE;
 
     //Poda stats

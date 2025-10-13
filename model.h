@@ -51,14 +51,12 @@ struct GameModel
 {
     
     bool first_human_try;
-
     tree_logic tree;
-
     double playerTime[2];
     double turnTimer;           //en segundos
-
     Player humanPlayer;
     Moves human_moves;
+    std::vector<Square> moveHistory;
 };
 
 
