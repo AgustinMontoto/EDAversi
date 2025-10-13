@@ -56,11 +56,40 @@ static std::string historyStringUpper(const GameModel& model) {
 
 // Tabla de aperturas: prefijo -> mejor siguiente jugada (ambas en mayúsculas).
 static const std::vector<std::pair<std::string,std::string>> OPENING_BOOK = {
+    // --- Familias base (1 respuesta por línea clásica) ---
     {"C4C3", "D3"},     // Diagonal → D3
     {"C4E3", "F5"},     // Perpendicular → F5
     {"C4C5", "D6"},     // Paralela → D6
-    {"C4E3F4C5", "D6"}, // Mimura/Shaman rama base
-    {"C4C3D3C5", "D6"}, // Landau/Buffalo rama base
+
+    // --- Shaman / Danish / Mimura (cadenas con F4, C5, D6…) ---
+    {"C4E3F4C5",       "D6"}, // … → D6
+    {"C4E3F4C5D6",     "F3"}, // Shaman/Danish: …D6 → F3 (blancas)
+    {"C4E3F4C5D6F3",   "C6"}, // Shaman (negras juegan C6)
+    {"C4E3F4C5D6F3D3", "C3"}, // Iago: …F3 D3 → C3 (blancas)
+
+    // --- Landau / Buffalo / Maruoka (líneas con C3 D3 C5 …) ---
+    {"C4C3D3C5",          "D6"}, // Landau/Maruoka base: …C5 → D6
+    {"C4C3D3C5D6",        "F4"}, // Maruoka: …D6 → F4 (blancas)
+    {"C4C3D3C5D6F4",      "F5"}, // Maruoka: …F4 → F5 (negras)
+    {"C4C3D3C5D6F4F5",    "E6"}, // Maruoka: …F5 → E6 (blancas)
+    {"C4C3D3C5D6F4F5E6",  "C6"}, // Maruoka: …E6 → C6 (negras)
+    {"C4C3D3C5D6F4F5E6C6","D7"}, // Maruoka: …C6 → D7 (blancas)
+
+    // Variantes Buffalo (Kenichi / Maruoka Buffalo / Tanida / Hokuriku)
+    {"C4C3D3C5",        "F6"}, // Buffalo (Kenichi): …C5 → F6 (negras)
+    {"C4C3D3C5F6",      "E2"}, // Maruoka Buffalo: …F6 → E2 (blancas)
+    {"C4C3D3C5F6E2",    "C6"}, // Maruoka Buffalo: …E2 → C6 (negras)
+
+    {"C4C3D3C5F6",      "E3"}, // Tanida Buffalo: …F6 → E3 (blancas)
+    {"C4C3D3C5F6E3",    "C6"}, // Tanida Buffalo: …E3 → C6 (negras)
+    {"C4C3D3C5F6E3C6",  "F5"}, // Tanida Buffalo: …C6 → F5 (blancas)
+    {"C4C3D3C5F6E3C6F5","F4"}, // Tanida Buffalo: …F5 → F4 (negras)
+    {"C4C3D3C5F6E3C6F5F4","G5"},// Tanida Buffalo: …F4 → G5 (blancas)
+    {"C4C3D3C5F6",      "F5"}, // Hokuriku Buffalo: …F6 → F5 (blancas)
+
+    // --- Wing / Semi-Wing ---
+    {"C4C3E6", "C5"},   // Wing: …E6 → C5 (blancas)
+    {"C4C3F5", "C5"},   // Semi-Wing: …F5 → C5 (blancas)
 };
 
 // Busca coincidencia exacta de prefijo y valida que la jugada sea legal.
