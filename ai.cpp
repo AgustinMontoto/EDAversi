@@ -72,29 +72,28 @@ void free_tree(Tree_level_t & Tree_level){
     Tree_level.clear();
 }
 
-int Recorrido_BFS(Tree_level_t& Tree_level, int maxNodesExplored){     //uso el algoritmo BFS para la parte tres del juego
+void Recorrido_BFS(treeNode* TreeNode, Player ia_player, Player humanPlayer,int maxNodesExplored){     //uso el algoritmo BFS para la parte tres del juego
     static int maxValue = -1000;       //valor random muy chico para el caso del primer hijo   
     static int minValue = 1000;
     int g_nodesExplored = 0;
 
-    if(Tree_level.empty()){
+    /*if(Tree_level.empty()){
         return;
-    }
-    std::queue<treeNode *> q;
-    for(auto node:Tree_level){
-        q.push(node);
-    }
+    }*/
+    std::queue<treeNode* > q;
+    
+    q.push(TreeNode);
     while(!q.empty() && g_nodesExplored < maxNodesExplored && maxValue < minValue){
         treeNode *node = q.front();
         q.pop();
 
         //visit node
-        if (node->model.currentPlayer == ia_player) {     // Turno de la IA: maximizar    
-            int value = value_state(node->model);
+        if (node->state.currentPlayer == ia_player) {     // Turno de la IA: maximizar    
+            int value = value_state(node->state, ia_player, humanPlayer);
             maxValue += value;
         }
         else {                // Turno del humano: minimizar
-            int value = value_state(node->model);
+            int value = value_state(node->state, ia_player, humanPlayer);
             minValue -= value;
         }
 
@@ -105,10 +104,7 @@ int Recorrido_BFS(Tree_level_t& Tree_level, int maxNodesExplored){     //uso el 
             q.push(childNode);
         }
     }
-    Tree_level->value = (maxValue +1000) - (minValue-1000);
-
-    return Tree_level->value;  // retorno los puntos de cada jugada 
-
+    TreeNode->value = (maxValue +1000) - (minValue-1000);
 }
 
 // Algoritmo Minimax recursivo
