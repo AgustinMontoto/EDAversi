@@ -4,7 +4,7 @@
 
 * MICAELA DINSEN: Desarrollo del motor de reglas y la mecánica central del juego Reversi, asegurando que el motor del juego se comporte de acuerdo al reglamento oficial.
 
-* AGUSTIN MONTOTO: Desarrollo del motor de reglas y mecanica central del juego Reversi, asegurando que el motor del juego se comporte de acuerdo al reglamento oficial. Implementacion del modelo de ia alpha-beta pruning. Implementacion de los openings y mejores jugadas del inicio. 
+* AGUSTIN MONTOTO: Desarrollo del motor de reglas y mecanica central del juego Reversi, asegurando que el motor del juego se comporte de acuerdo al reglamento oficial. Implementacion de los openings y mejores jugadas del inicio. 
 
 * LEILA CASAIS: Generacion del arbol de juego, evaluacion de los nodos de la parte 2 del TP y poda por profundidad y cantidad de nodos.
 
